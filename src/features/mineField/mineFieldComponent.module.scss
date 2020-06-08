@@ -1,7 +1,10 @@
+$bg-color: #a0a0b0;
+
 .mineField {
-  background: #e0e0e0;
-  border-right: 1px solid #909090;
-  border-bottom: 1px solid #909090;
+  position: relative;
+  background: $bg-color;
+  border-right: 1px solid $bg-color;
+  border-bottom: 1px solid $bg-color;
 }
 
 .row {
@@ -9,22 +12,43 @@
   line-height: 2rem;
   vertical-align: middle;
   font-size: 0;
-  border-top: 1px solid #909090;
+  border-top: 1px solid $bg-color;
   display: flex;
   justify-content: center;
   align-items: center;
-  > span {
-    user-select: none;
-    width: 2rem;
-    display: block;
-    // vertical-align: middle;
-    border-left: 1px solid #909090;
-    font-size: 14px;
-    min-width: 2rem
-    
+}
+
+.brick {
+  user-select: none;
+  width: 2rem;
+  display: block;
+  // vertical-align: middle;
+  border-left: 1px solid $bg-color;
+  font-size: 14px;
+  min-width: 2rem;
+  transition: all linear 0.2s;
+  &.inVisible {
+    background: #e0e0e0;
+    &:hover {
+      background: #808080;
+      color: #f0f0f0;
+    }
   }
-  > span:hover {
-    background: #808080;
-    color: #f0f0f0;
+  &.visible.mine {
+    background: radial-gradient(circle at 35% 35%, rgba(0,0,0,0) 0, rgba(0,0,0,0.8) 40%, rgba(0,0,0,0.8) 100%);
+    border-radius: 1rem;
+  }
+}
+
+.statusBar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  left: 0;
+  line-height: 3rem;
+  background-color: adjust-color($bg-color, $lightness: +10%);
+  > span {
+    font-weight: bolder;
+    color: change-color(red, $lightness: 40%, $saturation: 70%);
   }
 }
