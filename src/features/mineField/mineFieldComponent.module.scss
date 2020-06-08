@@ -1,0 +1,30 @@
+.mineField {
+  background: #e0e0e0;
+  border-right: 1px solid #909090;
+  border-bottom: 1px solid #909090;
+}
+
+.row {
+  height: 2rem;
+  line-height: 2rem;
+  vertical-align: middle;
+  font-size: 0;
+  border-top: 1px solid #909090;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  > span {
+    user-select: none;
+    width: 2rem;
+    display: block;
+    // vertical-align: middle;
+    border-left: 1px solid #909090;
+    font-size: 14px;
+    min-width: 2rem
+    
+  }
+  > span:hover {
+    background: #808080;
+    color: #f0f0f0;
+  }
+}
