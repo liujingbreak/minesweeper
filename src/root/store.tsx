@@ -1,10 +1,10 @@
-import { configureStore, Action } from '@reduxjs/toolkit';
+import { configureStore, Action, Observable } from '@reduxjs/toolkit';
 import { ThunkAction } from 'redux-thunk';
-import { createEpicMiddleware } from 'redux-observable';
+import { createEpicMiddleware, ofType, Epic } from 'redux-observable';
 import rootReducer, { RootState } from './rootReducer';
 import rootEpic from './rootEpic';
 import {BehaviorSubject} from 'rxjs';
-import {switchMap} from 'rxjs/operators';
+import {mergeMap, takeUntil} from 'rxjs/operators';
 
 const epicMiddleware = createEpicMiddleware();
 
@@ -14,11 +14,15 @@ const store = configureStore({
 });
 
 
-const epic$ = new BehaviorSubject(rootEpic);
-epicMiddleware.run((...args: any[]) => {
+const epic$ = new BehaviorSubject<Epic>(rootEpic);
+epicMiddleware.run((action$, ...args: any[]) => {
   return epic$.pipe(
-    switchMap(epic => (epic as any)(...args))
-  ) as any;
+    mergeMap(epic => ((epic as any)(action$, ...args) as ReturnType<Epic>).pipe(
+      takeUntil(action$.pipe(
+        ofType('EPIC_END')
+      ))
+    ))
+  );
 });
 
 if (process.env.NODE_ENV !== 'production' && module.hot) {
@@ -29,6 +33,9 @@ if (process.env.NODE_ENV !== 'production' && module.hot) {
 
   module.hot.accept('./rootEpic', () => {
     const nextRootEpic = require('./rootEpic').default as typeof rootEpic;
+    // First kill any running epics
+    store.dispatch({ type: 'EPIC_END' });
+ 
     epic$.next(nextRootEpic);
   });
 }
